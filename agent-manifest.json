@@ -1,0 +1,81 @@
+{
+  "brand": "FixBay Repair Café Assistant",
+  "networks": [
+    {
+      "name": "fixbay_repair_assistant",
+      "front_man": "fixbay_coordinator",
+      "hocon": "./fixbay_repair_assistant.network.json",
+      "description": "Diagnose broken electronics and appliances, check spare-part inventory & safety hazards, calculate CO2 & dollar savings, and reserve a community repair workbench.",
+      "tags": [
+        "deployed",
+        "nsdeploy",
+        "repair-cafe",
+        "sustainability"
+      ],
+      "sample_queries": [
+        "My espresso machine has low pressure and leaks near the portafilter. Is it safe and worth repairing?",
+        "Check spare parts for a mechanical keyboard USB-C port repair and reserve one for me.",
+        "Which Saturday workbench slots have a micro-soldering station available?",
+        "Reserve the 58mm silicone group gasket and help me book a Saturday afternoon bench."
+      ]
+    }
+  ],
+  "llm_router": {
+    "base_url": "https://api.otari.ai/api/v1",
+    "mock": false,
+    "byok_router": "https://api.otari.ai/api/v1"
+  },
+  "allowed_peers": [],
+  "peer_policy": {
+    "mode": "closed",
+    "deny_origins": [],
+    "note": "Runs a 4-agent local specialist network with verified page-local workshop actions and an inspectable live TraceBus."
+  },
+  "agent_mcp": {
+    "protocol": "nsdeploy-agent-mcp/v1",
+    "network": "fixbay_repair_assistant",
+    "front_man": "fixbay_coordinator",
+    "available": false,
+    "reason": "Static GitHub Pages bundle; browser runtime executes locally with BYOK/Otari LLM routing."
+  },
+  "theme": {
+    "primary": "#0f766e"
+  },
+  "linking": {
+    "protocol": "nsdeploy-link/v1",
+    "exports": [
+      {
+        "network": "fixbay_repair_assistant",
+        "front_man": "fixbay_coordinator",
+        "aliases": [
+          "fixbay_repair_assistant",
+          "fixbay_coordinator"
+        ],
+        "url": "fixbay_repair_assistant"
+      }
+    ],
+    "imports": [],
+    "link_updates": {
+      "mode": "browser-local"
+    }
+  },
+  "deployment": {
+    "mode": "static",
+    "self_contained_runtime": true,
+    "browser_mock": false,
+    "direct_byok": true,
+    "direct_mcp_requires_cors": true,
+    "public_mcp_facade": false
+  },
+  "actions": {
+    "version": 1,
+    "module": "./fixbay-actions.js",
+    "agentTools": [
+      "get_workshop_state",
+      "diagnose_device",
+      "reserve_spare_part",
+      "clear_part_reservations",
+      "book_repair_bench"
+    ]
+  }
+}

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="FixBay Open Agentic Repair Café — Right-to-repair diagnostics, spare parts reservations, workbench bookings, and a 4-agent Open Agentic Web network."
+    />
+    <title>FixBay — Open Agentic Community Repair Café</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="workshop.js"></script>
+    <script type="module" src="site.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#">
+          <span class="brand-badge">🔧</span>
+          <span>Fix<strong>Bay</strong></span>
+          <span class="spec-pill">Open Agentic Web</span>
+        </a>
+        <nav aria-label="Primary navigation">
+          <a href="#diagnostics">Diagnostics</a>
+          <a href="#bench">Parts &amp; Benches</a>
+          <a href="#assistant">Agent Network</a>
+          <a href="#inspector">Protocol Trace</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <!-- Hero + Community Impact -->
+      <section class="hero">
+        <div>
+          <p class="eyebrow">RIGHT TO REPAIR · OPEN AGENTIC WEB CHALLENGE 2026</p>
+          <h1>Repair it, don’t landfill it.</h1>
+          <p class="lead">
+            Diagnose broken electronics &amp; appliances safely, check live spare-parts inventory,
+            and reserve a volunteer-mentored workbench—either directly below or via our embedded
+            4-agent <strong>Open Agentic Web</strong> network.
+          </p>
+          <p class="demo-banner">
+            Static Open Agentic Web app — all bookings &amp; reservations are local interactive
+            simulations with full machine-readable <code>agent-manifest.json</code>,
+            <code>fixbay_repair_assistant.network.json</code>, <code>links.json</code>, and
+            browser <code>runtime/</code>.
+          </p>
+        </div>
+        <div class="impact-grid">
+          <div class="impact-tile">
+            <span class="impact-lbl">CO₂ Diverted</span>
+            <strong id="metric-co2">142 kg</strong>
+          </div>
+          <div class="impact-tile">
+            <span class="impact-lbl">Member Savings</span>
+            <strong id="metric-usd">$2,680</strong>
+          </div>
+          <div class="impact-tile">
+            <span class="impact-lbl">Benches Booked</span>
+            <strong id="metric-bookings">18</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- Device Triage Catalog -->
+      <section id="diagnostics" class="section-block">
+        <div class="section-head">
+          <h2>1. Right-to-Repair Diagnostics Catalog</h2>
+          <p>Select a device to inspect safety hazard ratings, estimated repair savings, and matching spare parts.</p>
+        </div>
+        <div id="device-grid" class="device-grid"></div>
+      </section>
+
+      <!-- Spare Parts + Bench Booking -->
+      <section id="bench" class="two-col">
+        <div class="card">
+          <h2>2. Live Spare Parts Inventory</h2>
+          <p class="muted">Shared state updated in real time by both human clicks and <code>website_reserve_spare_part</code>.</p>
+          <div id="parts-list" class="parts-list"></div>
+          <div class="kit-box">
+            <h3>Your Reserved Parts Kit</h3>
+            <div id="reserved-kit"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>3. Reserve a Repair Workbench</h2>
+          <p class="muted">
+            Booking invokes the same validation logic as the agent’s irreversible
+            <code>website_book_repair_bench</code> action (which prompts user review before executing).
+          </p>
+          <form id="booking-form" class="booking-form">
+            <label for="member-name">Your name</label>
+            <input id="member-name" name="memberName" required maxlength="80" placeholder="e.g., Alex Chen" />
+
+            <label for="device-select">Device to repair</label>
+            <select id="device-select" name="deviceId"></select>
+
+            <label for="slot-select">Available workbench slot</label>
+            <select id="slot-select" name="slotId"></select>
+
+            <button type="submit" class="primary-btn">Reserve Repair Bench (Demo)</button>
+            <p id="booking-error" class="error-text" role="alert"></p>
+          </form>
+
+          <div id="booking-receipt" class="receipt-box" hidden></div>
+        </div>
+      </section>
+
+      <!-- Embedded Open Agentic Web Multi-Agent Assistant -->
+      <section id="assistant" class="card assistant-section">
+        <div class="section-head">
+          <h2>4. Ask FixBay — Embedded Open Agentic Network</h2>
+          <p>
+            Powered by Cognizant’s Open Agentic Web browser runtime (<code>./runtime/index.js</code>)
+            running <code>fixbay_coordinator</code> + 3 specialists (<code>diagnostics_specialist</code>,
+            <code>parts_inventory_specialist</code>, <code>bench_scheduler_specialist</code>).
+            Configure your own Mozilla Otari / OpenRouter / BYOK API key inside <strong>⚙ AI model settings</strong>.
+          </p>
+        </div>
+        <p id="assistant-status" class="status-line" role="status">Booting Open Agentic Web runtime…</p>
+        <div id="agent-app">
+          <div data-ns-slot="header"></div>
+          <div class="assistant-tools">
+            <div data-ns-slot="agents"></div>
+            <details class="assistant-settings">
+              <summary>⚙ AI model &amp; BYOK key settings</summary>
+              <div data-ns-slot="settings"></div>
+            </details>
+          </div>
+          <div data-ns-slot="chat"></div>
+        </div>
+      </section>
+
+      <!-- Community Bonus Tool: Live Protocol & Action Trace Inspector -->
+      <section id="inspector" class="card inspector-section">
+        <div class="section-head">
+          <h2>5. Open Agentic Web Protocol &amp; Action Trace Inspector</h2>
+          <p>
+            Reusable developer inspection panel showing live conformance artifacts and real-time
+            <code>TraceBus</code> / <code>registerActions</code> calls.
+          </p>
+        </div>
+        <div class="artifact-links">
+          <a href="./agent-manifest.json" target="_blank" rel="noopener">📄 agent-manifest.json</a>
+          <a href="./fixbay_repair_assistant.network.json" target="_blank" rel="noopener">🧠 fixbay_repair_assistant.network.json</a>
+          <a href="./links.json" target="_blank" rel="noopener">🔗 links.json</a>
+          <a href="./fixbay-actions.js" target="_blank" rel="noopener">⚡ fixbay-actions.js (5 actions)</a>
+          <a href="./runtime/index.js" target="_blank" rel="noopener">⚙️ runtime/index.js</a>
+        </div>
+        <div id="trace-log" class="trace-log"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      FixBay Open Agentic Repair Café · MIT Licensed · Built for the 2026 Open Agentic Web Challenge
+    </footer>
+  </body>
+</html>

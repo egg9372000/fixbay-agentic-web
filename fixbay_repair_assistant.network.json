@@ -1,0 +1,123 @@
+{
+  "aaosa_instructions": "Use relevant downstream agents when their expertise helps, then consolidate their findings into one concise, safety-first answer. Ask for clarification only when needed to proceed. For Determine requests, return JSON with Name, Inquiry, Mode, Relevant (Yes or No), Strength (1 to 10), Claim (All or Partial), and Requirements (None or a list). For Fulfill or Follow up requests, return JSON with Name, Inquiry, Mode (Fulfill), and Response. Answer human requests naturally.",
+  "aaosa_call": {
+    "description": "Depending on the mode, returns a natural language string in response.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "inquiry": {
+          "type": "string",
+          "description": "The inquiry"
+        },
+        "mode": {
+          "type": "string",
+          "description": "'Determine' to ask the agent if the inquiry belongs to it, in its entirety or in part. 'Fulfill' to ask the agent to fulfill the inquiry, if it can. 'Follow up' to ask the agent to respond to a follow up."
+        }
+      },
+      "required": [
+        "inquiry",
+        "mode"
+      ]
+    }
+  },
+  "aaosa_command": "",
+  "metadata": {
+    "description": "FixBay Open Agentic Community Repair Café multi-agent network for right-to-repair diagnostics, spare parts reservations, safety triage, and workbench bookings.",
+    "sample_queries": [
+      "My espresso machine has low pressure and leaks near the portafilter. Is it safe and worth repairing?",
+      "Check spare parts for a mechanical keyboard USB-C port repair and reserve one for me.",
+      "Which Saturday workbench slots have a micro-soldering station available?",
+      "Reserve the 58mm silicone group gasket and help me book a Saturday afternoon bench."
+    ],
+    "date_created": "2026-11-25T07:12:00+00:00"
+  },
+  "llm_config": {
+    "model_name": "alibaba/qwen3.8-flash"
+  },
+  "max_execution_seconds": 600,
+  "instructions_prefix": "Help community members repair devices safely using the FixBay Repair Café website as the single source of truth. Always inspect live workshop state and tools rather than inventing stock, prices, or bench slots.",
+  "tools": [
+    {
+      "name": "fixbay_coordinator",
+      "function": {
+        "description": "Coordinate device repair diagnostics, safety hazard triage, spare-part reservations, eco-impact estimates, and workbench bookings.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "inquiry": { "type": "string", "description": "The user or peer-agent inquiry" },
+            "mode": { "type": "string", "description": "'Determine', 'Fulfill', or 'Follow up'" }
+          },
+          "required": ["inquiry", "mode"]
+        }
+      },
+      "instructions": "Read live devices, spare parts inventory, workbench slots, reservations, and bookings from the FixBay website via its live tools. Never fabricate part SKUs, stock counts, safety clearances, or booking confirmations. Delegate to diagnostics_specialist, parts_inventory_specialist, and bench_scheduler_specialist when helpful and synthesize one clear, actionable response. Always emphasize electrical or lithium-ion battery safety warnings before suggesting any disassembly. Respect the user confirmation dialog for irreversible bench bookings.",
+      "tools": [
+        "diagnostics_specialist",
+        "parts_inventory_specialist",
+        "bench_scheduler_specialist"
+      ]
+    },
+    {
+      "name": "diagnostics_specialist",
+      "function": {
+        "description": "Diagnose device symptoms, flag safety hazards (mains voltage, Li-ion thermal risk), estimate repair cost vs. replacement savings, and report CO2 avoided.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "inquiry": { "type": "string", "description": "Device and symptom inquiry" },
+            "mode": { "type": "string", "description": "'Determine', 'Fulfill', or 'Follow up'" }
+          },
+          "required": ["inquiry", "mode"]
+        }
+      },
+      "instructions": "Use website_diagnose_device and live workshop state to evaluate device symptoms objectively. Always state the safety level (LOW, MODERATE, HIGH), specific hazard note, required bench equipment, estimated repair cost vs. replacement cost, and kilograms of CO2 saved by repairing instead of discarding.",
+      "tools": []
+    },
+    {
+      "name": "parts_inventory_specialist",
+      "function": {
+        "description": "Check live spare-part stock counts, prices, and manage spare-part reservations for a repair session.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "inquiry": { "type": "string", "description": "Spare parts availability or reservation request" },
+            "mode": { "type": "string", "description": "'Determine', 'Fulfill', or 'Follow up'" }
+          },
+          "required": ["inquiry", "mode"]
+        }
+      },
+      "instructions": "Check live spare-part stock via website_get_workshop_state before recommending or reserving parts. Use website_reserve_spare_part to add verified in-stock parts to the user's bench kit, or website_clear_part_reservations if they want to reset. Report exact SKU, quantity reserved, unit cost, and remaining stock.",
+      "tools": []
+    },
+    {
+      "name": "bench_scheduler_specialist",
+      "function": {
+        "description": "Inspect open community repair workbench slots, match equipment to the user's repair needs, and propose reviewed irreversible bench bookings.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "inquiry": { "type": "string", "description": "Workbench availability or booking request" },
+            "mode": { "type": "string", "description": "'Determine', 'Fulfill', or 'Follow up'" }
+          },
+          "required": ["inquiry", "mode"]
+        }
+      },
+      "instructions": "Read live bench slots and current stateVersion from website_get_workshop_state. Match the device's required equipment (e.g., Micro-Soldering, Multimeter, Bike Torque Stand, Mechanical Press) to an open slot. Collect memberName and deviceId before calling website_book_repair_bench (which requires user confirmation as an irreversible action). Never retry a cancelled booking without a new request.",
+      "tools": []
+    }
+  ],
+  "cruse": {
+    "version": 1
+  },
+  "link_slots": {},
+  "link_labels": {},
+  "deployment": {
+    "mode": "static",
+    "omitted_python_tools": [
+      "web_fetch"
+    ],
+    "external_mcp_transport": "direct-cors",
+    "link_persistence": "browser-local",
+    "notes": "Grounded in FixBay Repair Café live in-browser state with reviewed local actions and TraceBus protocol inspector."
+  }
+}
